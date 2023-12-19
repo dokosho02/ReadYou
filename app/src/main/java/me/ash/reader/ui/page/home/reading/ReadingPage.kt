@@ -4,18 +4,30 @@ import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import me.ash.reader.infrastructure.preference.LocalReadingAutoHideToolbar
 import me.ash.reader.infrastructure.preference.LocalReadingPageTonalElevation
 import me.ash.reader.ui.component.base.RYScaffold
@@ -26,7 +38,7 @@ import me.ash.reader.ui.ext.swipeLeftAndRight
 import me.ash.reader.ui.ext.swipeableUpDown
 import me.ash.reader.ui.page.home.HomeViewModel
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ReadingPage(
     navController: NavHostController,
@@ -45,6 +57,12 @@ fun ReadingPage(
     } else {
         true
     }
+
+//    var offsetState by remember { mutableStateOf(0) }
+//    val screenHeight = LocalConfiguration.current.screenHeightDp
+//    val scrollHeight = (screenHeight*0.8).toInt()
+//    val scope = CoroutineScope(Dispatchers.Default)
+
 
     readingViewModel.recordCurrentReadingState(homeViewModel)
 
@@ -75,6 +93,7 @@ fun ReadingPage(
 
             Box(modifier = Modifier
                 .fillMaxSize()
+//                .verticalScroll(rememberScrollState())
                 .swipeLeftAndRight(
                     onLeft = {
                         slideDirection.value = ArticleSwipeDirection.Left.raw
@@ -85,16 +104,33 @@ fun ReadingPage(
                         readingViewModel.trySwitchArticle(readingProgressState.readingNext)
                     }
                 )
+//                .combinedClickable(
+//                    onClick = {
+//                        offsetState -= scrollHeight
+//                    },
+//                    onDoubleClick = {
+//                        offsetState += scrollHeight
+//                    },
+//                    onLongClick = {
+//                        // ロングクリック
+//                    }
+//                )
+//                .verticalScroll(rememberScrollState().apply {
+//                    // Manually adjust scroll position based on offsetY
+//                    scope.launch {
+//                        scrollBy(offsetState.toFloat())
+//                    }
+//                })
                 .swipeableUpDown(
                     onUp = {
-                        if (!readingUiState.isFullContent) {
-                            readingViewModel.renderFullContent()
-                        }
+//                        if (!readingUiState.isFullContent) {
+//                            readingViewModel.renderFullContent()
+//                        }
                     },
                     onDown = {
-                        if (!readingUiState.isFullContent) {
-                            readingViewModel.renderFullContent()
-                        }
+//                        if (!readingUiState.isFullContent) {
+//                            readingViewModel.renderFullContent()
+//                        }
                     })) {
                 // Top Bar
                 TopBar(
@@ -169,6 +205,9 @@ fun ReadingPage(
                             else readingViewModel.renderDescriptionContent()
                         },
                         progress = "${readingProgressState.readingCurrentNumber+1} / ${readingProgressState.readingList.size}",
+                        onClose = {
+                            navController.popBackStack()
+                        },
                     )
                 }
             }

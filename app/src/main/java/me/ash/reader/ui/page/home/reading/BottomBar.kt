@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.outlined.Article
 import androidx.compose.material.icons.outlined.FiberManualRecord
 import androidx.compose.material.icons.rounded.Article
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
@@ -23,6 +24,7 @@ import androidx.compose.ui.zIndex
 import me.ash.reader.R
 import me.ash.reader.infrastructure.preference.LocalReadingPageTonalElevation
 import me.ash.reader.ui.component.base.CanBeDisabledIconButton
+import me.ash.reader.ui.component.base.FeedbackIconButton
 import me.ash.reader.ui.component.base.RYExtensibleVisibility
 
 @Composable
@@ -35,7 +37,8 @@ fun BottomBar(
     onStarred: (isStarred: Boolean) -> Unit = {},
     onFullContent: (isFullContent: Boolean) -> Unit = {},
     progress: String,
-) {
+    onClose: () -> Unit = {},
+    ) {
     val tonalElevation = LocalReadingPageTonalElevation.current
 
     Box(
@@ -115,6 +118,15 @@ fun BottomBar(
                     ) {
                         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                         onFullContent(!isFullContent)
+                    }
+
+                    // close
+                    FeedbackIconButton(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.close),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    ) {
+                        onClose()
                     }
                 }
             }

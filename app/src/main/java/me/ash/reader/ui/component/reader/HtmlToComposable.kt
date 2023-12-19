@@ -33,6 +33,10 @@ import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,6 +94,7 @@ private fun LazyListScope.formatBody(
     onLinkClick: (String) -> Unit,
     baseUrl: String,
 ) {
+
     val composer = TextComposer { paragraphBuilder ->
         item {
             val paragraph = paragraphBuilder.toAnnotatedString()
